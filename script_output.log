@@ -1,0 +1,245 @@
+---------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\frank\OneDrive\1. Freshman\ECON50\EmpProj1Part2\script_output.log
+  log type:  text
+ opened on:  22 May 2020, 19:06:23
+
+. 
+. * Change Stata working directory
+. * Use drop down menu: file, change working directly
+. 
+. * Load in cleaned atlas data 
+. use atlas, clear
+
+. 
+. list kfr_pooled_pooled_p25 if state == 34 & county == 029  & tract == 722002
+
+       +----------+
+       | kfr_po.. |
+       |----------|
+60641. |  .465223 |
+       +----------+
+
+. 
+. * Determine mean for different parameters for each tract
+. 
+. * Toms River
+. sum kfr_pooled_pooled_p25 if state == 34 & county == 029  & tract == 722002
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+kfr_po~d_p25 |          1     .465223           .    .465223    .465223
+
+. * Lakewood
+. sum kfr_pooled_pooled_p25 if state == 34 & county == 029  & tract == 715700
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+kfr_po~d_p25 |          1    .3498229           .   .3498229   .3498229
+
+. * Manchester
+. sum kfr_pooled_pooled_p25 if state == 34 & county == 029  & tract == 720205
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+kfr_po~d_p25 |          1    .3550509           .   .3550509   .3550509
+
+. 
+. * Toms River
+. sum popdensity2010 if state == 34 & county == 029  & tract == 722002
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+popdens~2010 |          1    2000.487           .   2000.487   2000.487
+
+. * Lakewood
+. sum popdensity2010 if state == 34 & county == 029  & tract == 715700
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+popdens~2010 |          1    2925.033           .   2925.033   2925.033
+
+. * Manchester
+. sum popdensity2010 if state == 34 & county == 029  & tract == 720205
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+popdens~2010 |          1    1136.805           .   1136.805   1136.805
+
+. 
+. * Toms River
+. sum frac_coll_plus2010 if state == 34 & county == 029  & tract == 722002
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+frac_co~2010 |          1    .2272961           .   .2272961   .2272961
+
+. * Lakewood
+. sum frac_coll_plus2010 if state == 34 & county == 029  & tract == 715700
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+frac_co~2010 |          1    .2457503           .   .2457503   .2457503
+
+. * Manchester
+. sum frac_coll_plus2010 if state == 34 & county == 029  & tract == 720205
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+frac_co~2010 |          1     .141172           .    .141172    .141172
+
+. 
+. * Toms River
+. sum poor_share2010 if state == 34 & county == 029  & tract == 722002
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+poor_sh~2010 |          1    .0880882           .   .0880882   .0880882
+
+. * Lakewood
+. sum poor_share2010 if state == 34 & county == 029  & tract == 715700
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+poor_sh~2010 |          1    .2248521           .   .2248521   .2248521
+
+. * Manchester
+. sum poor_share2010 if state == 34 & county == 029  & tract == 720205
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+poor_sh~2010 |          1    .0658901           .   .0658901   .0658901
+
+. 
+. * tract: 715700 = Lakewood
+. * tract: 720205 = Manchester
+. * tract: 722002 = Toms River
+. 
+. * Determine covariates
+. 
+. gen countyPooled = kfr_pooled_pooled_p25 if state == 34 & county == 029
+(73,155 missing values generated)
+
+. 
+. gen countyBlack = kfr_black_pooled_p25 if state == 34 & county == 029
+(73,249 missing values generated)
+
+. gen countyWhite = kfr_white_pooled_p25 if state == 34 & county == 029
+(73,155 missing values generated)
+
+. gen countyHisp = kfr_hisp_pooled_p25 if state == 34 & county == 029
+(73,203 missing values generated)
+
+. 
+. 
+. *Install Michael Droste's software
+. net install corrplot, from(https://raw.githubusercontent.com/mdroste/stata-corrplot/master/) replace force
+checking corrplot consistency and verifying not already installed...
+
+the following files will be replaced:
+    C:\Users\frank\ado\plus\c\corrplot.ado
+    C:\Users\frank\ado\plus\c\corrplot.sthlp
+
+installing into C:\Users\frank\ado\plus\...
+installation complete.
+
+. 
+. * Create corr plots for each racial group
+. 
+. corrplot countyPooled popdensity2000 popdensity2010 poor_share2010 poor_share2000 poor_share1990 gsmn_math_g3_2013 mail_return_rate20
+> 10 ln_wage_growth_hs_grad mean_commutetime2000 frac_coll_plus2010 frac_coll_plus2000 foreign_share2010 singleparent_share2010 singlep
+> arent_share2000 singleparent_share1990
+
+Pairwise correlation with countyPooled
+
+              Correlation     CI lower     CI upper
+popdens~2000     -.083179   -.25057679    .08421879
+popdens~2010   -.18631547   -.32724161   -.04538933
+poor_sh~2010   -.42670081   -.56420143   -.28920018
+poor_sh~2000    -.3744288   -.55133003   -.19752758
+poor_sh~1990   -.29522538   -.45291632   -.13753444
+gsmn_ma~2013    .40604353    .27218182    .53990523
+mail_re~2010    .20085268   -.02125014    .42295551
+ln_wage_gr~d   -.03428036     -.221879    .15331827
+mean_co~2000    .17731057   -.01871751    .37333865
+frac_co~2010      .363366    .17034428    .55638772
+frac_co~2000    .37969256    .19784318    .56154193
+foreign~2010   -.38979784   -.54188639   -.23770928
+singlep~2010   -.28822384   -.46933463   -.10711304
+singlep~2000    -.3957156   -.63239778   -.15903342
+singlep~1990   -.06537438   -.40278766    .27203891
+
+. 
+. corrplot countyBlack popdensity2000 popdensity2010 poor_share2010 poor_share2000 poor_share1990 gsmn_math_g3_2013 mail_return_rate201
+> 0 ln_wage_growth_hs_grad mean_commutetime2000 frac_coll_plus2010 frac_coll_plus2000 foreign_share2010 singleparent_share2010 singlepa
+> rent_share2000 singleparent_share1990
+
+Pairwise correlation with countyBlack
+
+              Correlation     CI lower     CI upper
+popdens~2000   -.18136681    -.4200038    .05727018
+popdens~2010   -.23904848   -.49572234    .01762538
+poor_sh~2010   -.19826364   -.45409451    .05756723
+poor_sh~2000   -.27549283   -.50664658   -.04433909
+poor_sh~1990   -.18444325   -.42641581     .0575293
+gsmn_ma~2013     .2171902   -.09440277    .52878317
+mail_re~2010    .19210759   -.15816948    .54238466
+ln_wage_gr~d    .09269454   -.24232597    .42771506
+mean_co~2000    .39803134    .10807069    .68799199
+frac_co~2010    .06249798   -.26521029    .39020624
+frac_co~2000    .16521797   -.15142869    .48186463
+foreign~2010   -.01478322   -.33562351    .30605707
+singlep~2010   -.15367488   -.52506578    .21771603
+singlep~2000   -.27073046   -.80690715    .26544623
+singlep~1990   -.07310916   -.51099224    .36477393
+
+. 
+. corrplot countyWhite popdensity2000 popdensity2010 poor_share2010 poor_share2000 poor_share1990 gsmn_math_g3_2013 mail_return_rate201
+> 0 ln_wage_growth_hs_grad mean_commutetime2000 frac_coll_plus2010 frac_coll_plus2000 foreign_share2010 singleparent_share2010 singlepa
+> rent_share2000 
+
+Pairwise correlation with countyWhite
+
+              Correlation     CI lower     CI upper
+popdens~2000   -.02321094   -.18512654    .13870465
+popdens~2010   -.07487154   -.21750611    .06776304
+poor_sh~2010   -.26550926   -.39400243   -.13701609
+poor_sh~2000   -.23749417   -.36123337   -.11375496
+poor_sh~1990   -.17333662   -.31235456   -.03431868
+gsmn_ma~2013    .18891111    .03062814    .34719409
+mail_re~2010    .16114199   -.05938349    .38166748
+ln_wage_gr~d    .00244039    -.1824608    .18734158
+mean_co~2000    .09719756   -.08878419    .28317931
+frac_co~2010    .41361625    .22559419    .60163831
+frac_co~2000    .43275238    .25678715     .6087176
+foreign~2010   -.23817537   -.38177495    -.0945758
+singlep~2010    -.2462858   -.42237055   -.07020104
+singlep~2000   -.31239442    -.5570164   -.06777244
+
+. 
+. corrplot countyHisp popdensity2000 popdensity2010 poor_share2010 poor_share2000 poor_share1990 gsmn_math_g3_2013 mail_return_rate2010
+>  ln_wage_growth_hs_grad mean_commutetime2000 frac_coll_plus2010 frac_coll_plus2000 foreign_share2010 singleparent_share2010 singlepar
+> ent_share2000 singleparent_share1990
+
+Pairwise correlation with countyHisp
+
+              Correlation     CI lower     CI upper
+popdens~2000   -.05481097    -.2636732    .15405127
+popdens~2010    -.1032002   -.28467811    .07827771
+poor_sh~2010   -.25933031   -.42757486   -.09108577
+poor_sh~2000   -.26929905   -.46283031   -.07576778
+poor_sh~1990   -.26713186   -.43868261    -.0955811
+gsmn_ma~2013    .19208507    .00615155    .37801859
+mail_re~2010   -.05940273   -.30659735    .18779188
+ln_wage_gr~d   -.19175203   -.48565363    .10214957
+mean_co~2000    .14701224   -.02315999    .31718447
+frac_co~2010    .10336994   -.14530364    .35204352
+frac_co~2000    .02389078   -.26121452    .30899607
+foreign~2010    -.0555849   -.26259435    .15142454
+singlep~2010   -.11664979   -.35069381    .11739422
+singlep~2000   -.06606017   -.30413311    .17201276
+singlep~1990   -.21461848   -.40677087   -.02246608
+
+. 
+end of do-file
+
